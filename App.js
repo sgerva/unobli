@@ -29,7 +29,7 @@ import signout from "./utils/signout";
 // import signup from "./utils/signup";
 // import sendMessage from "./utils/sendMessage";
 
-// imports we might be using
+// imports I might be using
 import "firebase/functions";
 import darkColors from "react-native-elements/dist/config/colorsDark";
 //import "firebase/storage";
