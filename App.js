@@ -9,6 +9,7 @@ import {
   Pressable,
   Alert,
   Platform,
+  ScrollView,
 } from "react-native";
 import { Button, Divider, Text } from "react-native-elements";
 import * as Notifications from "expo-notifications";
@@ -67,6 +68,7 @@ async function sendPushNotification(body, username, id) {
     const message = {
       to: expoToken,
       sound: "default",
+      title: username,
       body: body,
     };
 
@@ -484,7 +486,7 @@ export default function App() {
     }
   }
 
-  async function signout(firebaseApp, user) {
+  async function signout(firebaseApp, user, subscriber) {
     firebaseApp
       .auth()
       .signOut()
@@ -614,6 +616,7 @@ export default function App() {
           onChangeText={(text) => setEmail(text)}
         />
         <TextInput
+          secureTextEntry
           style={styles.textImput}
           placeholder="Password"
           onChangeText={(text) => setPassword(text)}
@@ -632,68 +635,6 @@ export default function App() {
           <Text>New? Sign up</Text>
         </Pressable>
         <StatusBar style="auto" />
-      </View>
-    );
-  }
-
-  if (user && currentView === "home") {
-    return (
-      <View style={styles.containerHome}>
-        <Image
-          style={{ width: "100%", height: 200, marginTop: 0 }}
-          source={require("./header-17.png")}
-        />
-        <Text h3>Your Friends {username}</Text>
-
-        <Pressable
-          onPress={() => addFriend()}
-          style={styles.friendButtons}
-          style={styles.addFriend}
-        >
-          <Text>+ Add Friend</Text>
-        </Pressable>
-
-        <Pressable
-          onPress={() => setCurrentView("letters")}
-          style={styles.viewLetter}
-        >
-          <Text style={{ fontSize: 17 }}>View recieved letters</Text>
-        </Pressable>
-
-        {!friends || friends === [] ? (
-          <Text>no friends</Text>
-        ) : (
-          friends.map((username) => {
-            return (
-              <View key={username}>
-                <Image
-                  style={styles.avatar}
-                  source={require("./avatar-18-17-17-17.png")}
-                />
-                <Text>{username}</Text>
-                <Pressable
-                  style={styles.notification}
-                  onPress={() => sendNotification(username)}
-                >
-                  <Text>Send Notification</Text>
-                </Pressable>
-                <Pressable
-                  style={styles.letter}
-                  onPress={() => sendLetter(username)}
-                >
-                  <Text>Send Letter</Text>
-                </Pressable>
-                <Divider style={{ backgroundColor: "gray" }} />
-              </View>
-            );
-          })
-        )}
-        <Pressable
-          onPress={() => signout(firebaseApp, user)}
-          style={{ marginTop: 20 }}
-        >
-          <Text>Sign Out</Text>
-        </Pressable>
       </View>
     );
   }
@@ -789,7 +730,73 @@ export default function App() {
       </View>
     );
   }
+  if (user && currentView === "home") {
+    return (
+      <View style={styles.containerHome}>
+        <Image
+          style={{ width: "100%", height: 200, marginTop: 0 }}
+          source={require("./header-17.png")}
+        />
+        <Text h3>Your Friends {username}</Text>
 
+        <Pressable
+          onPress={() => addFriend()}
+          style={styles.friendButtons}
+          style={styles.addFriend}
+        >
+          <Text>+ Add Friend</Text>
+        </Pressable>
+
+        <Pressable
+          onPress={() => setCurrentView("letters")}
+          style={styles.viewLetter}
+        >
+          <Text style={{ fontSize: 17 }}>View recieved letters</Text>
+        </Pressable>
+
+        {!friends || friends === [] ? (
+          <Text>no friends</Text>
+        ) : (
+          friends.map((username) => {
+            return (
+              <View key={username}>
+                <Image
+                  style={styles.avatar}
+                  source={require("./avatar-18-17-17-17.png")}
+                />
+                <Text>{username}</Text>
+                <Pressable
+                  style={styles.notification}
+                  onPress={() => sendNotification(username)}
+                >
+                  <Text>Send Notification</Text>
+                </Pressable>
+                <Pressable
+                  style={styles.letter}
+                  onPress={() => sendLetter(username)}
+                >
+                  <Text>Send Letter</Text>
+                </Pressable>
+                <Divider
+                  style={{
+                    backgroundColor: "gray",
+                    marginBottom: 5,
+                    marginTop: 5,
+                  }}
+                />
+              </View>
+            );
+          })
+        )}
+        <Pressable
+          onPress={() => signout(firebaseApp, user)}
+          style={{ marginTop: 20 }}
+        >
+          <Text>Sign Out</Text>
+        </Pressable>
+      </View>
+    );
+  }
   return (
     <View style={styles.container}>
       <Button
@@ -851,8 +858,8 @@ const styles = StyleSheet.create({
   },
 
   avatar: {
-    width: 110,
-    height: 90,
+    width: 100,
+    height: 70,
     resizeMode: "contain",
     justifyContent: "center",
   },
@@ -872,7 +879,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFC932",
     borderRadius: 250,
     padding: 10,
-    marginBottom: 20,
+    marginBottom: 10,
     color: "#fff",
   },
   letter: {
