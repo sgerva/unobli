@@ -4,17 +4,16 @@ import "firebase/firestore";
 export default function useLetters(db, user) {
   const [letters, setLetters] = useState([]);
 
+  const userUid = user ? user.uid : undefined;
+
   useEffect(() => {
     async function getLetters() {
+      if (!userUid) return;
       try {
-        let uid = "";
-        if (user) {
-          uid = user.uid;
-        }
         console.log("fetching letters");
         await db
           .collection("users")
-          .doc(uid)
+          .doc(userUid)
           .onSnapshot((doc) => {
             // console.log("Current data: ", doc.data());
             setLetters(doc.data().letters);
@@ -31,7 +30,7 @@ export default function useLetters(db, user) {
       console.log("letters unmounted");
       // unsubcribe;
     };
-  }, []);
+  }, [userUid]);
 
   return letters;
 }
